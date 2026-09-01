@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fidel Bonilla | Asesor Automotriz</title>
+<meta name="description" content="Fidel Ernesto Bonilla Álvarez — Asesor automotriz multimarca. Autos nuevos y usados, financiamiento y entrega a domicilio.">
+<style>
+  /* ============ CONFIG ============ */
+  :root{
+    --bg: #0a0e17;
+    --bg-2: #0e1424;
+    --card: #121a2b;
+    --card-border: rgba(255,255,255,0.08);
+    --text: #eef1f8;
+    --text-dim: #9aa4bd;
+    --accent-1: #ff6a3d;
+    --accent-2: #7b2ff7;
+    --accent-3: #00d4ff;
+    --accent-4: #ffcf3d;
+    --whatsapp: #25d366;
+    --radius: 18px;
+    --shadow: 0 10px 40px rgba(0,0,0,0.45);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.5;
+  }
+  img, svg{ display:block; max-width:100%; }
+  a{ color:inherit; text-decoration:none; }
+  ul{ list-style:none; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 24px; }
+  section{ position:relative; padding:100px 0; }
+  h1,h2,h3{ line-height:1.15; font-weight:800; letter-spacing:-0.01em; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:13px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+    color: var(--accent-3);
+    margin-bottom:14px;
+  }
+  .eyebrow::before{ content:""; width:8px; height:8px; border-radius:50%; background: var(--accent-3); box-shadow:0 0 12px var(--accent-3); }
+  .grad-text{
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+    background-size: 200% auto;
+    -webkit-background-clip: text; background-clip:text; color:transparent;
+    animation: hueflow 6s linear infinite;
+  }
+  @keyframes hueflow{ 0%{ background-position:0% 50%; } 100%{ background-position:200% 50%; } }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:15px 28px; border-radius:999px; font-weight:700; font-size:15px;
+    cursor:pointer; border:none; transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .btn:hover{ transform: translateY(-3px); }
+  .btn-primary{
+    background: linear-gradient(120deg, var(--accent-1), var(--accent-2));
+    color:#fff; box-shadow: 0 8px 30px rgba(123,47,247,0.35);
+  }
+  .btn-primary:hover{ box-shadow: 0 12px 36px rgba(123,47,247,0.55); }
+  .btn-ghost{
+    background: rgba(255,255,255,0.06);
+    color: var(--text); border:1px solid var(--card-border);
+  }
+  .btn-whatsapp{
+    background: var(--whatsapp); color:#08210f;
+  }
+
+  /* ============ VIDEO DE FONDO SINCRONIZADO CON EL SCROLL (toda la página) ============ */
+  .bg-video{
+    position: fixed; inset:0; z-index:-2;
+    width:100%; height:100%;
+    object-fit: cover; object-position: center;
+    filter: saturate(1.2) brightness(0.92) contrast(1.05);
+    background: #000 url('assets/story-poster.png') center/cover no-repeat;
+  }
+  .bg-overlay{
+    position: fixed; inset:0; z-index:-1;
+    background:
+      linear-gradient(180deg, rgba(8,11,18,0.45) 0%, transparent 18%, transparent 78%, rgba(8,11,18,0.5) 100%);
+  }
+
+  /* ============ NAV ============ */
+  header.nav{
+    position:fixed; top:0; left:0; right:0; z-index:500;
+    backdrop-filter: blur(14px);
+    background: rgba(10,14,23,0.55);
+    border-bottom:1px solid var(--card-border);
+  }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto; }
+  .logo{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:17px; }
+  .logo-mark{
+    width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    font-size:15px; font-weight:800; color:#fff; flex-shrink:0;
+  }
+  nav.links{ display:flex; gap:32px; }
+  nav.links a{ font-size:14px; font-weight:600; color: var(--text-dim); transition: color .2s; }
+  nav.links a:hover{ color: var(--text); }
+  .nav-cta{ display:flex; align-items:center; gap:14px; }
+
+  /* ============ HERO (datos del asesor, sobre el video) ============ */
+  .hero{ min-height:100vh; display:flex; align-items:center; padding-top:110px; }
+  .hero h1{ font-size:clamp(34px, 5vw, 58px); margin-bottom:20px; text-shadow: 0 4px 24px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.8); }
+  .hero p.lead{ font-size:18px; color:var(--text); max-width:520px; margin-bottom:32px; text-shadow: 0 2px 14px rgba(0,0,0,0.75); }
+  .hero-actions{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:44px; }
+  .hero-stats{ display:flex; gap:36px; flex-wrap:wrap; }
+  .stat b{ font-size:28px; display:block; background:linear-gradient(120deg,var(--accent-4),var(--accent-1)); -webkit-background-clip:text; background-clip:text; color:transparent; filter: drop-shadow(0 2px 10px rgba(0,0,0,0.6)); }
+  .stat span{ font-size:13px; color:var(--text); text-shadow: 0 2px 10px rgba(0,0,0,0.75); }
+  .eyebrow{ text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
+
+  /* ============ SOBRE MI (flota sobre el video) ============ */
+  .about-panel{
+    max-width:640px; margin:0 auto; text-align:center;
+    background: rgba(10,14,23,0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border:1px solid var(--card-border); border-radius:28px; padding:48px 40px;
+  }
+  .about-panel p{ color:var(--text-dim); font-size:16px; margin-bottom:28px; }
+  .counters{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .counter-card{ background:rgba(255,255,255,0.04); border:1px solid var(--card-border); border-radius:var(--radius); padding:20px 12px; }
+  .counter-card b{ font-size:26px; display:block; margin-bottom:4px; }
+  .counter-card span{ font-size:12px; color:var(--text-dim); }
+
+  /* ============ MARQUEE (marcas) ============ */
+  .marquee-section{ padding:46px 0; border-top:1px solid var(--card-border); border-bottom:1px solid var(--card-border); background: rgba(14,20,36,0.22); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+  .marquee-label{ text-align:center; font-size:13px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.14em; margin-bottom:22px; font-weight:700; }
+  .marquee{ overflow:hidden; position:relative; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .marquee-track{ display:flex; gap:16px; width:max-content; animation: scrollx 22s linear infinite; }
+  @keyframes scrollx{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  .brand-chip{
+    padding:12px 26px; border:1px solid var(--card-border); border-radius:999px;
+    background: var(--card); font-weight:700; font-size:14px; color: var(--text-dim); white-space:nowrap;
+  }
+
+  /* ============ SECTION HEAD ============ */
+  .section-head{ text-align:center; max-width:640px; margin:0 auto 56px; }
+  .section-head h2{ font-size:clamp(28px,4vw,40px); margin-bottom:14px; }
+  .section-head p{ color:var(--text-dim); font-size:16px; }
+
+  /* ============ CATALOGO ============ */
+  .catalog-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:26px; }
+  .car-card{
+    background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius);
+    overflow:hidden; transition: transform .3s ease, box-shadow .3s ease;
+  }
+  .car-card:hover{ transform: translateY(-8px); box-shadow: var(--shadow); }
+  .car-card-media{
+    height:180px; position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .media-1{ background: linear-gradient(135deg,#ff6a3d,#7b2ff7); }
+  .media-2{ background: linear-gradient(135deg,#00d4ff,#7b2ff7); }
+  .media-3{ background: linear-gradient(135deg,#ffcf3d,#ff6a3d); }
+  .car-card-media::after{
+    content:""; position:absolute; inset:0;
+    background-image: radial-gradient(circle, rgba(255,255,255,.18) 1px, transparent 1.4px);
+    background-size: 18px 18px;
+    animation: driftbg 6s linear infinite;
+  }
+  @keyframes driftbg{ from{ background-position:0 0; } to{ background-position: 90px 40px; } }
+  .tag{
+    position:absolute; top:12px; left:12px; z-index:2;
+    background: rgba(0,0,0,.45); padding:5px 12px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.04em;
+  }
+  .car-card-body{ padding:20px; }
+  .car-card-body h3{ font-size:18px; margin-bottom:6px; }
+  .car-card-body .price{ color:var(--accent-4); font-weight:800; font-size:20px; margin-bottom:14px; display:block; }
+  .car-meta{ display:flex; gap:14px; margin-bottom:16px; font-size:12px; color:var(--text-dim); }
+
+  /* ============ SERVICIOS ============ */
+  .services-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .service-card{
+    background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius);
+    padding:28px 24px; transition: transform .3s ease, border-color .3s;
+  }
+  .service-card:hover{ transform: translateY(-6px); border-color: var(--accent-3); }
+  .service-icon{
+    width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent-3)); margin-bottom:18px; font-size:22px;
+  }
+  .service-card h3{ font-size:17px; margin-bottom:8px; }
+  .service-card p{ color:var(--text-dim); font-size:14px; }
+
+  /* ============ TESTIMONIOS ============ */
+  .testi-track{ display:flex; gap:20px; width:max-content; animation: scrollx 30s linear infinite; }
+  .testi-card{
+    width:340px; background:var(--card); border:1px solid var(--card-border); border-radius:var(--radius);
+    padding:26px; flex-shrink:0;
+  }
+  .stars{ color: var(--accent-4); margin-bottom:12px; letter-spacing:2px; }
+  .testi-card p{ color:var(--text-dim); font-size:14px; margin-bottom:16px; }
+  .testi-person{ display:flex; align-items:center; gap:10px; }
+  .testi-avatar{ width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--accent-1),var(--accent-2)); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
+  .testi-person b{ font-size:14px; display:block; }
+  .testi-person span{ font-size:12px; color:var(--text-dim); }
+
+  /* ============ CONTACTO ============ */
+  .contact-wrap{
+    display:grid; grid-template-columns: 1fr 1fr; gap:50px;
+    background: linear-gradient(135deg, rgba(123,47,247,.16), rgba(0,212,255,.12));
+    border:1px solid var(--card-border); border-radius:28px; padding:56px; overflow:hidden; position:relative;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  }
+  .contact-info h2{ font-size:30px; margin-bottom:16px; }
+  .contact-info p{ color: var(--text-dim); margin-bottom:28px; }
+  .contact-line{ display:flex; align-items:center; gap:14px; margin-bottom:18px; font-size:15px; }
+  .contact-line .ic{ width:40px; height:40px; border-radius:12px; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+
+  form.contact-form{ display:flex; flex-direction:column; gap:14px; }
+  form.contact-form input, form.contact-form textarea{
+    width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--card-border);
+    background: rgba(255,255,255,0.06); color:var(--text); font-size:14px; font-family:inherit;
+  }
+  form.contact-form input::placeholder, form.contact-form textarea::placeholder{ color:var(--text-dim); }
+  form.contact-form textarea{ resize:vertical; min-height:100px; }
+  form.contact-form button{ margin-top:6px; }
+
+  /* ============ FOOTER ============ */
+  footer{ padding:44px 0 30px; border-top:1px solid var(--card-border); text-align:center; background: rgba(8,11,18,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  footer p{ color: var(--text-dim); font-size:13px; margin-top:10px; }
+  .footer-logo{ display:flex; align-items:center; justify-content:center; gap:10px; font-weight:800; margin-bottom:6px; }
+
+  /* ============ WHATSAPP FLOAT ============ */
+  .wa-float{
+    position:fixed; bottom:26px; right:26px; z-index:600;
+    width:60px; height:60px; border-radius:50%; background: var(--whatsapp);
+    display:flex; align-items:center; justify-content:center; font-size:28px;
+    box-shadow: 0 8px 24px rgba(37,211,102,.5);
+  }
+  .wa-float::before{
+    content:""; position:absolute; inset:0; border-radius:50%; background: var(--whatsapp);
+    animation: pulsering 2s ease-out infinite; z-index:-1;
+  }
+  @keyframes pulsering{ 0%{ transform:scale(1); opacity:.6; } 100%{ transform:scale(1.9); opacity:0; } }
+
+  /* ============ SCROLL PROGRESS ============ */
+  .scroll-bar{ position:fixed; top:0; left:0; height:3px; background: linear-gradient(90deg,var(--accent-1),var(--accent-2),var(--accent-3)); z-index:700; width:0%; }
+
+  /* ============ REVEAL ============ */
+  .reveal{ opacity:0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform: translateY(0); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 900px){
+    nav.links{ display:none; }
+    .catalog-grid{ grid-template-columns:1fr 1fr; }
+    .services-grid{ grid-template-columns:1fr 1fr; }
+    .contact-wrap{ grid-template-columns:1fr; padding:32px; }
+  }
+  @media (max-width: 600px){
+    section{ padding:70px 0; }
+    .catalog-grid{ grid-template-columns:1fr; }
+    .services-grid{ grid-template-columns:1fr; }
+    .counters{ grid-template-columns:1fr; }
+    .about-panel{ padding:32px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- El video vive detrás de TODA la página (fixed) y su fotograma lo controla el scroll -->
+<video class="bg-video" id="bgVideo" muted playsinline preload="auto" poster="assets/story-poster.png">
+  <source src="assets/hero-bg.mp4" type="video/mp4">
+</video>
+<div class="bg-overlay"></div>
+
+<div class="scroll-bar" id="scrollBar"></div>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo"><span class="logo-mark">FB</span> Fidel Bonilla</div>
+    <nav class="links">
+      <a href="#sobre-mi">Conóceme</a>
+      <a href="#catalogo">Catálogo</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#testimonios">Opiniones</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-whatsapp" style="padding:10px 20px;font-size:13px" href="https://wa.me/50000000000?text=Hola%20Fidel%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20auto" target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container">
+    <div class="reveal visible">
+      <div class="eyebrow">Asesor automotriz multimarca</div>
+      <h1>Fidel Ernesto<br><span class="grad-text">Bonilla Álvarez</span></h1>
+      <p class="lead">Tu próximo auto empieza aquí. Autos nuevos y usados, financiamiento a tu medida y asesoría personalizada — desliza y sigue el recorrido.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="https://wa.me/50000000000?text=Hola%20Fidel%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20auto" target="_blank" rel="noopener">💬 Cotizar por WhatsApp</a>
+        <a class="btn btn-ghost" href="#catalogo">Ver catálogo</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><b>12+</b><span>Años de experiencia</span></div>
+        <div class="stat"><b>500+</b><span>Autos entregados</span></div>
+        <div class="stat"><b>4.9★</b><span>Calificación clientes</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOBRE MI ============ -->
+<section id="sobre-mi">
+  <div class="container">
+    <div class="about-panel reveal">
+      <div class="eyebrow" style="justify-content:center">Sobre mí</div>
+      <h2 style="margin-bottom:16px;">Asesoría honesta, de principio a fin</h2>
+      <p>Mi trabajo no termina cuando firmas: te acompaño en la elección, el financiamiento, el papeleo y la entrega, para que tomes la mejor decisión sin presiones.</p>
+      <div class="counters">
+        <div class="counter-card"><b class="grad-text">500+</b><span>Autos entregados</span></div>
+        <div class="counter-card"><b class="grad-text">98%</b><span>Clientes satisfechos</span></div>
+        <div class="counter-card"><b class="grad-text">24h</b><span>Tiempo de respuesta</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE MARCAS ============ -->
+<div class="marquee-section">
+  <div class="marquee-label">Trabajo con las marcas más confiables del mercado</div>
+  <div class="marquee">
+    <div class="marquee-track" id="brandTrack">
+      <div class="brand-chip">Toyota</div>
+      <div class="brand-chip">Nissan</div>
+      <div class="brand-chip">Chevrolet</div>
+      <div class="brand-chip">Kia</div>
+      <div class="brand-chip">Mazda</div>
+      <div class="brand-chip">Hyundai</div>
+      <div class="brand-chip">Volkswagen</div>
+      <div class="brand-chip">Ford</div>
+      <div class="brand-chip">Honda</div>
+      <div class="brand-chip">Suzuki</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CATALOGO ============ -->
+<section id="catalogo">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="justify-content:center">Catálogo destacado</div>
+      <h2>Algunas opciones disponibles ahora</h2>
+      <p>Inventario multimarca actualizado. Pregunta por disponibilidad y condiciones de financiamiento.</p>
+    </div>
+    <div class="catalog-grid">
+      <div class="car-card reveal">
+        <div class="car-card-media media-1"><span class="tag">Usado · Como nuevo</span></div>
+        <div class="car-card-body">
+          <h3>Sedán Compacto 2021</h3>
+          <span class="price">Desde $9,800</span>
+          <div class="car-meta"><span>🛣️ 38,000 km</span><span>⚙️ Automático</span></div>
+          <a class="btn btn-whatsapp" style="width:100%;justify-content:center;padding:12px" href="https://wa.me/50000000000?text=Hola%2C%20me%20interesa%20el%20Sed%C3%A1n%20Compacto%202021" target="_blank" rel="noopener">Consultar</a>
+        </div>
+      </div>
+      <div class="car-card reveal">
+        <div class="car-card-media media-2"><span class="tag">Nuevo</span></div>
+        <div class="car-card-body">
+          <h3>SUV Familiar 2024</h3>
+          <span class="price">Desde $22,500</span>
+          <div class="car-meta"><span>🛣️ 0 km</span><span>⚙️ Automático</span></div>
+          <a class="btn btn-whatsapp" style="width:100%;justify-content:center;padding:12px" href="https://wa.me/50000000000?text=Hola%2C%20me%20interesa%20la%20SUV%20Familiar%202024" target="_blank" rel="noopener">Consultar</a>
+        </div>
+      </div>
+      <div class="car-card reveal">
+        <div class="car-card-media media-3"><span class="tag">Usado</span></div>
+        <div class="car-card-body">
+          <h3>Pickup 4x4 2020</h3>
+          <span class="price">Desde $16,900</span>
+          <div class="car-meta"><span>🛣️ 52,000 km</span><span>⚙️ Manual</span></div>
+          <a class="btn btn-whatsapp" style="width:100%;justify-content:center;padding:12px" href="https://wa.me/50000000000?text=Hola%2C%20me%20interesa%20la%20Pickup%204x4%202020" target="_blank" rel="noopener">Consultar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICIOS ============ -->
+<section id="servicios" style="background:rgba(14,20,36,0.2); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="justify-content:center">Servicios</div>
+      <h2>Todo lo que necesitas en un solo lugar</h2>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal"><div class="service-icon">🚗</div><h3>Multimarca</h3><p>Nuevos y usados de las principales marcas del mercado.</p></div>
+      <div class="service-card reveal"><div class="service-icon">💳</div><h3>Financiamiento</h3><p>Planes flexibles adaptados a tu capacidad de pago.</p></div>
+      <div class="service-card reveal"><div class="service-icon">🔄</div><h3>Recibo tu auto</h3><p>Toma tu vehículo actual como parte de pago.</p></div>
+      <div class="service-card reveal"><div class="service-icon">🛡️</div><h3>Garantía</h3><p>Vehículos revisados con garantía sobre motor y transmisión.</p></div>
+      <div class="service-card reveal"><div class="service-icon">🚚</div><h3>Entrega a domicilio</h3><p>Recibe tu auto donde te quede más cómodo.</p></div>
+      <div class="service-card reveal"><div class="service-icon">🤝</div><h3>Asesoría personalizada</h3><p>Te acompaño en cada paso, sin presión ni letra pequeña.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIOS ============ -->
+<section id="testimonios">
+  <div class="section-head reveal">
+    <div class="eyebrow" style="justify-content:center">Testimonios</div>
+    <h2>Lo que dicen mis clientes</h2>
+  </div>
+  <div class="marquee">
+    <div class="testi-track">
+      <div class="testi-card"><div class="stars">★★★★★</div><p>"Fidel me ayudó a encontrar el auto perfecto para mi presupuesto, todo el proceso fue rápido y transparente."</p><div class="testi-person"><div class="testi-avatar">MR</div><div><b>María R.</b><span>Compró un sedán 2021</span></div></div></div>
+      <div class="testi-card"><div class="stars">★★★★★</div><p>"Excelente asesoría, me explicó todas las opciones de financiamiento sin presionarme a decidir."</p><div class="testi-person"><div class="testi-avatar">JL</div><div><b>Jorge L.</b><span>Compró una SUV 2024</span></div></div></div>
+      <div class="testi-card"><div class="stars">★★★★★</div><p>"Recibió mi auto anterior como parte de pago y el trámite fue muchísimo más sencillo de lo que pensé."</p><div class="testi-person"><div class="testi-avatar">CD</div><div><b>Carla D.</b><span>Compró una pickup 2020</span></div></div></div>
+      <div class="testi-card"><div class="stars">★★★★★</div><p>"Fidel me ayudó a encontrar el auto perfecto para mi presupuesto, todo el proceso fue rápido y transparente."</p><div class="testi-person"><div class="testi-avatar">MR</div><div><b>María R.</b><span>Compró un sedán 2021</span></div></div></div>
+      <div class="testi-card"><div class="stars">★★★★★</div><p>"Excelente asesoría, me explicó todas las opciones de financiamiento sin presionarme a decidir."</p><div class="testi-person"><div class="testi-avatar">JL</div><div><b>Jorge L.</b><span>Compró una SUV 2024</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<section id="contacto">
+  <div class="container">
+    <div class="contact-wrap reveal">
+      <div class="contact-info">
+        <h2>Hablemos de tu próximo auto</h2>
+        <p>Escríbeme y te respondo en menos de 24 horas con opciones a tu medida.</p>
+        <div class="contact-line"><span class="ic">💬</span> WhatsApp: <a href="https://wa.me/50000000000" target="_blank" rel="noopener" style="margin-left:4px;text-decoration:underline">+50 0000 0000</a></div>
+        <div class="contact-line"><span class="ic">📍</span> Zona metropolitana</div>
+        <div class="contact-line"><span class="ic">🕘</span> Lun – Sáb · 8:00am – 7:00pm</div>
+      </div>
+      <form class="contact-form" action="mailto:contacto@ejemplo.com" method="post" enctype="text/plain">
+        <input type="text" placeholder="Tu nombre" required>
+        <input type="tel" placeholder="Tu teléfono" required>
+        <textarea placeholder="¿Qué tipo de auto buscas?" required></textarea>
+        <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-logo"><span class="logo-mark">FB</span> Fidel Bonilla</div>
+  <p>Asesor automotriz multimarca · Autos nuevos y usados</p>
+  <p>© 2026 Fidel Ernesto Bonilla Álvarez. Todos los derechos reservados.</p>
+</footer>
+
+<a class="wa-float" href="https://wa.me/50000000000?text=Hola%20Fidel%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20auto" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">💬</a>
+
+<script>
+  // Reemplaza este número por el WhatsApp real de Fidel (formato: código de país + número, sin + ni espacios)
+  const WHATSAPP_NUMBER = "50000000000";
+  document.querySelectorAll('a[href*="wa.me/50000000000"]').forEach(a=>{
+    a.href = a.href.replace("50000000000", WHATSAPP_NUMBER);
+  });
+
+  // Duplicar tracks de marquee para loop infinito real
+  document.querySelectorAll('.marquee-track, .testi-track').forEach(track=>{
+    track.innerHTML += track.innerHTML;
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); } });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el=> io.observe(el));
+
+  // Scroll progress bar
+  const bar = document.getElementById('scrollBar');
+  window.addEventListener('scroll', ()=>{
+    const h = document.documentElement;
+    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    bar.style.width = pct + '%';
+  }, { passive:true });
+
+  // ============ EL VIDEO ES LA PÁGINA: avanza con el scroll, en TODA la web ============
+  (function(){
+    const video = document.getElementById('bgVideo');
+    let duration = 10.07; // se ajusta cuando el navegador confirma la duración real
+    let videoReady = false;
+    video.addEventListener('loadedmetadata', ()=>{ if(video.duration) duration = video.duration; videoReady = true; });
+    video.addEventListener('canplay', ()=>{ videoReady = true; });
+    video.addEventListener('error', ()=>{
+      console.warn('El video no pudo cargarse (revisa que assets/hero-bg.mp4 exista junto al HTML). Se muestra la imagen de respaldo.');
+    });
+    video.pause(); // no se reproduce solo: el scroll es quien manda
+    video.load();
+
+    const PX_PER_LOOP = 700; // cada 700px de scroll, el video completa un ciclo entero
+
+    let ticking = false;
+    function update(){
+      ticking = false;
+      const y = Math.max(0, window.scrollY);
+      const cycle = (y % PX_PER_LOOP) / PX_PER_LOOP; // 0 → 1 dentro de cada ciclo
+      if(videoReady && video.readyState >= 1){
+        try{ video.currentTime = cycle * duration; }catch(err){ /* aún no listo para buscar */ }
+      }
+    }
+    function onScroll(){
+      if(!ticking){ requestAnimationFrame(update); ticking = true; }
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    window.addEventListener('resize', onScroll);
+    update();
+  })();
+
+  // Mailto form (sin backend): construye el enlace con los datos y lo abre
+  document.querySelector('.contact-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    const [nombre, tel] = this.querySelectorAll('input');
+    const msg = this.querySelector('textarea').value;
+    const body = encodeURIComponent(`Nombre: ${nombre.value}\nTeléfono: ${tel.value}\nMensaje: ${msg}`);
+    window.location.href = `mailto:contacto@ejemplo.com?subject=Contacto%20desde%20la%20web&body=${body}`;
+  });
+</script>
+
+</body>
+</html>
