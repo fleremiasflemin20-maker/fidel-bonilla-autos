@@ -1,521 +1,1074 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fidel Bonilla | Asesor Automotriz</title>
-<meta name="description" content="Fidel Ernesto Bonilla Álvarez — Asesor automotriz multimarca. Autos nuevos y usados, financiamiento y entrega a domicilio.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compra y venta de vehículos — Fidel Bonilla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  /* ============ CONFIG ============ */
   :root{
-    --bg: #0a0e17;
-    --bg-2: #0e1424;
-    --card: #121a2b;
-    --card-border: rgba(255,255,255,0.08);
-    --text: #eef1f8;
-    --text-dim: #9aa4bd;
-    --accent-1: #ff6a3d;
-    --accent-2: #7b2ff7;
-    --accent-3: #00d4ff;
-    --accent-4: #ffcf3d;
-    --whatsapp: #25d366;
-    --radius: 18px;
-    --shadow: 0 10px 40px rgba(0,0,0,0.45);
+    --bg:#08090b;
+    --bg-2:#0d0f12;
+    --fg:#f3f5f7;
+    --dim:#8a939c;
+    --accent:#e7e7e7;
+    --card:#111317;
+    --card-2:#0f1215;
+    --line:rgba(255,255,255,0.09);
+    /* Tipografia "de auto": geometrica, precisa, con ese aire tecnico
+       de marca premium (Space Grotesk) — se usa en titulos, eyebrows
+       y numeros; el texto de lectura larga se queda en Helvetica para
+       no cansar la vista. */
+    --font-display: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    /* IMPORTANTE: nunca overflow-x:hidden en html/body si usás position:sticky,
+       rompe el anclaje al viewport en todos los navegadores. */
   }
 
-  *{ margin:0; padding:0; box-sizing:border-box; }
-  html{ scroll-behavior:smooth; }
-  body{
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
-    line-height:1.5;
+  /* ---------- Secciones pineadas (una por video, + la intro) ---------- */
+  .pin-wrap{
+    position:relative;
+    height:350vh; /* subí/bajá esto para hacer el scrub mas lento o rapido */
   }
-  img, svg{ display:block; max-width:100%; }
-  a{ color:inherit; text-decoration:none; }
-  ul{ list-style:none; }
-  .container{ max-width:1180px; margin:0 auto; padding:0 24px; }
-  section{ position:relative; padding:100px 0; }
-  h1,h2,h3{ line-height:1.15; font-weight:800; letter-spacing:-0.01em; }
-  .eyebrow{
-    display:inline-flex; align-items:center; gap:8px;
-    font-size:13px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
-    color: var(--accent-3);
-    margin-bottom:14px;
+  .pin-stage{
+    position:sticky;
+    top:0;
+    height:100vh;
+    width:100%;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--bg);
   }
-  .eyebrow::before{ content:""; width:8px; height:8px; border-radius:50%; background: var(--accent-3); box-shadow:0 0 12px var(--accent-3); }
-  .grad-text{
-    background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
-    background-size: 200% auto;
-    -webkit-background-clip: text; background-clip:text; color:transparent;
-    animation: hueflow 6s linear infinite;
+  .pin-stage canvas{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    touch-action: pan-y; /* deja el scroll vertical nativo, el drag horizontal lo maneja JS */
+    cursor: grab;
   }
-  @keyframes hueflow{ 0%{ background-position:0% 50%; } 100%{ background-position:200% 50%; } }
+  .pin-stage canvas:active{ cursor: grabbing; }
 
-  .btn{
-    display:inline-flex; align-items:center; gap:10px;
-    padding:15px 28px; border-radius:999px; font-weight:700; font-size:15px;
-    cursor:pointer; border:none; transition: transform .25s ease, box-shadow .25s ease;
+  /* Tinte de "mood" por seccion: un color distinto de fondo segun el
+     tema (calido en garantia, frio en tecnologia, etc) para que cada
+     tramo se sienta como un capitulo distinto. */
+  .mood-tint{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    mix-blend-mode:soft-light;
+    opacity:0.55;
   }
-  .btn:hover{ transform: translateY(-3px); }
-  .btn-primary{
-    background: linear-gradient(120deg, var(--accent-1), var(--accent-2));
-    color:#fff; box-shadow: 0 8px 30px rgba(123,47,247,0.35);
+  .mood-amber{ background:radial-gradient(ellipse 70% 60% at 50% 35%, rgba(255,175,90,0.4), transparent 70%); }
+  .mood-cyan{ background:radial-gradient(ellipse 70% 60% at 50% 35%, rgba(80,190,255,0.32), transparent 70%); }
+  .mood-violet{ background:radial-gradient(ellipse 70% 60% at 50% 35%, rgba(165,115,255,0.3), transparent 70%); }
+  .mood-gold{ background:radial-gradient(ellipse 70% 60% at 50% 35%, rgba(255,205,95,0.32), transparent 70%); }
+  .mood-green{ background:radial-gradient(ellipse 70% 60% at 50% 35%, rgba(95,220,155,0.26), transparent 70%); }
+  /* Realce para fotogramas que vienen de video comprimido (la intro),
+     para acercar su nitidez percibida a la de los renders CGI. */
+  .pin-stage canvas.enhance{
+    filter: contrast(1.12) saturate(1.15) brightness(1.03);
   }
-  .btn-primary:hover{ box-shadow: 0 12px 36px rgba(123,47,247,0.55); }
-  .btn-ghost{
-    background: rgba(255,255,255,0.06);
-    color: var(--text); border:1px solid var(--card-border);
-  }
-  .btn-whatsapp{
-    background: var(--whatsapp); color:#08210f;
-  }
-
-  /* ============ VIDEO DE FONDO SINCRONIZADO CON EL SCROLL (toda la página) ============ */
-  .bg-video{
-    position: fixed; inset:0; z-index:-2;
-    width:100%; height:100%;
-    object-fit: cover; object-position: center;
-    filter: saturate(1.2) brightness(0.92) contrast(1.05);
-    background: #000 url('assets/story-poster.png') center/cover no-repeat;
-  }
-  .bg-overlay{
-    position: fixed; inset:0; z-index:-1;
+  .stage-overlay{
+    position:absolute;
+    inset:0;
     background:
-      linear-gradient(180deg, rgba(8,11,18,0.45) 0%, transparent 18%, transparent 78%, rgba(8,11,18,0.5) 100%);
+      radial-gradient(ellipse 85% 75% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.4) 100%),
+      linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 70%, rgba(0,0,0,0.6) 100%);
+    pointer-events:none;
   }
 
-  /* ============ NAV ============ */
-  header.nav{
-    position:fixed; top:0; left:0; right:0; z-index:500;
-    backdrop-filter: blur(14px);
-    background: rgba(10,14,23,0.55);
-    border-bottom:1px solid var(--card-border);
+  .caption{
+    position:absolute;
+    left:50%;
+    bottom:9%;
+    transform:translate(-50%, 14px);
+    opacity:0;
+    text-align:center;
+    pointer-events:none;
+    width:min(92vw, 720px);
   }
-  .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto; }
-  .logo{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:17px; }
-  .logo-mark{
-    width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center;
-    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-    font-size:15px; font-weight:800; color:#fff; flex-shrink:0;
+  .caption .eyebrow{
+    display:block;
+    color:var(--dim);
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    margin-bottom:8px;
   }
-  nav.links{ display:flex; gap:32px; }
-  nav.links a{ font-size:14px; font-weight:600; color: var(--text-dim); transition: color .2s; }
-  nav.links a:hover{ color: var(--text); }
-  .nav-cta{ display:flex; align-items:center; gap:14px; }
-
-  /* ============ HERO (datos del asesor, sobre el video) ============ */
-  .hero{ min-height:100vh; display:flex; align-items:center; padding-top:110px; }
-  .hero h1{ font-size:clamp(34px, 5vw, 58px); margin-bottom:20px; text-shadow: 0 4px 24px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.8); }
-  .hero p.lead{ font-size:18px; color:var(--text); max-width:520px; margin-bottom:32px; text-shadow: 0 2px 14px rgba(0,0,0,0.75); }
-  .hero-actions{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:44px; }
-  .hero-stats{ display:flex; gap:36px; flex-wrap:wrap; }
-  .stat b{ font-size:28px; display:block; background:linear-gradient(120deg,var(--accent-4),var(--accent-1)); -webkit-background-clip:text; background-clip:text; color:transparent; filter: drop-shadow(0 2px 10px rgba(0,0,0,0.6)); }
-  .stat span{ font-size:13px; color:var(--text); text-shadow: 0 2px 10px rgba(0,0,0,0.75); }
-  .eyebrow{ text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
-
-  /* ============ SOBRE MI (flota sobre el video) ============ */
-  .about-panel{
-    max-width:640px; margin:0 auto; text-align:center;
-    background: rgba(10,14,23,0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border:1px solid var(--card-border); border-radius:28px; padding:48px 40px;
-  }
-  .about-panel p{ color:var(--text-dim); font-size:16px; margin-bottom:28px; }
-  .counters{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-  .counter-card{ background:rgba(255,255,255,0.04); border:1px solid var(--card-border); border-radius:var(--radius); padding:20px 12px; }
-  .counter-card b{ font-size:26px; display:block; margin-bottom:4px; }
-  .counter-card span{ font-size:12px; color:var(--text-dim); }
-
-  /* ============ MARQUEE (marcas) ============ */
-  .marquee-section{ padding:46px 0; border-top:1px solid var(--card-border); border-bottom:1px solid var(--card-border); background: rgba(14,20,36,0.22); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
-  .marquee-label{ text-align:center; font-size:13px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.14em; margin-bottom:22px; font-weight:700; }
-  .marquee{ overflow:hidden; position:relative; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
-  .marquee-track{ display:flex; gap:16px; width:max-content; animation: scrollx 22s linear infinite; }
-  @keyframes scrollx{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
-  .brand-chip{
-    padding:12px 26px; border:1px solid var(--card-border); border-radius:999px;
-    background: var(--card); font-weight:700; font-size:14px; color: var(--text-dim); white-space:nowrap;
+  .caption h2{
+    font-family:var(--font-display);
+    margin:0;
+    font-size:clamp(22px,4vw,42px);
+    font-weight:700;
+    letter-spacing:-0.01em;
+    text-shadow:0 2px 24px rgba(0,0,0,0.6);
   }
 
-  /* ============ SECTION HEAD ============ */
-  .section-head{ text-align:center; max-width:640px; margin:0 auto 56px; }
-  .section-head h2{ font-size:clamp(28px,4vw,40px); margin-bottom:14px; }
-  .section-head p{ color:var(--text-dim); font-size:16px; }
+  .progress-track{
+    position:absolute;
+    right:20px;
+    top:50%;
+    transform:translateY(-50%);
+    width:3px;
+    height:140px;
+    background:rgba(255,255,255,0.14);
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    position:absolute;
+    bottom:0;
+    left:0;
+    width:100%;
+    background:#fff;
+    border-radius:3px;
+    height:0%;
+  }
 
-  /* ============ CATALOGO ============ */
-  .catalog-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:26px; }
-  .car-card{
-    background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius);
-    overflow:hidden; transition: transform .3s ease, box-shadow .3s ease;
+  .section-index{
+    position:absolute;
+    left:24px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--dim);
+    font-size:12px;
+    letter-spacing:0.1em;
   }
-  .car-card:hover{ transform: translateY(-8px); box-shadow: var(--shadow); }
-  .car-card-media{
-    height:180px; position:relative; overflow:hidden;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .media-1{ background: linear-gradient(135deg,#ff6a3d,#7b2ff7); }
-  .media-2{ background: linear-gradient(135deg,#00d4ff,#7b2ff7); }
-  .media-3{ background: linear-gradient(135deg,#ffcf3d,#ff6a3d); }
-  .car-card-media::after{
-    content:""; position:absolute; inset:0;
-    background-image: radial-gradient(circle, rgba(255,255,255,.18) 1px, transparent 1.4px);
-    background-size: 18px 18px;
-    animation: driftbg 6s linear infinite;
-  }
-  @keyframes driftbg{ from{ background-position:0 0; } to{ background-position: 90px 40px; } }
-  .tag{
-    position:absolute; top:12px; left:12px; z-index:2;
-    background: rgba(0,0,0,.45); padding:5px 12px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.04em;
-  }
-  .car-card-body{ padding:20px; }
-  .car-card-body h3{ font-size:18px; margin-bottom:6px; }
-  .car-card-body .price{ color:var(--accent-4); font-weight:800; font-size:20px; margin-bottom:14px; display:block; }
-  .car-meta{ display:flex; gap:14px; margin-bottom:16px; font-size:12px; color:var(--text-dim); }
 
-  /* ============ SERVICIOS ============ */
-  .services-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
-  .service-card{
-    background: var(--card); border:1px solid var(--card-border); border-radius: var(--radius);
-    padding:28px 24px; transition: transform .3s ease, border-color .3s;
+  /* Ficha de datos: informacion real del servicio, superpuesta con
+     elegancia sobre las secciones de autos con fotogramas (vidrio
+     esmerilado oscuro, letras bien legibles). Se desvanece con el
+     mismo ritmo de entrada que el resto del "chrome" de la seccion. */
+  .data-chip{
+    position:absolute;
+    right:clamp(16px, 4vw, 32px);
+    top:104px;
+    max-width:min(78vw, 300px);
+    padding:16px 20px;
+    border-radius:16px;
+    background:rgba(10,11,14,0.6);
+    border:1px solid var(--line);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    box-shadow:0 20px 50px -25px rgba(0,0,0,0.7);
   }
-  .service-card:hover{ transform: translateY(-6px); border-color: var(--accent-3); }
-  .service-icon{
-    width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center;
-    background: linear-gradient(135deg, var(--accent-2), var(--accent-3)); margin-bottom:18px; font-size:22px;
+  .data-chip-label{
+    font-family:var(--font-display);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--dim);
+    margin:0 0 10px;
   }
-  .service-card h3{ font-size:17px; margin-bottom:8px; }
-  .service-card p{ color:var(--text-dim); font-size:14px; }
+  .data-chip-label::before{
+    content:"";
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--accent);
+    flex:none;
+  }
+  .data-chip ul{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+  }
+  .data-chip li{
+    font-size:13px;
+    line-height:1.4;
+    color:var(--fg);
+    letter-spacing:0.005em;
+  }
+  .data-chip li b{
+    font-weight:700;
+  }
+  @media (max-width:640px){
+    .data-chip{ top:auto; bottom:120px; right:16px; padding:14px 16px; }
+    .data-chip li{ font-size:12.5px; }
+  }
 
-  /* ============ TESTIMONIOS ============ */
-  .testi-track{ display:flex; gap:20px; width:max-content; animation: scrollx 30s linear infinite; }
-  .testi-card{
-    width:340px; background:var(--card); border:1px solid var(--card-border); border-radius:var(--radius);
-    padding:26px; flex-shrink:0;
+  /* ---------- Intro (primera seccion pineada) ---------- */
+  .intro-heading{
+    position:absolute;
+    left:50%; top:38%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+    width:min(92vw, 760px);
+    pointer-events:none;
   }
-  .stars{ color: var(--accent-4); margin-bottom:12px; letter-spacing:2px; }
-  .testi-card p{ color:var(--text-dim); font-size:14px; margin-bottom:16px; }
-  .testi-person{ display:flex; align-items:center; gap:10px; }
-  .testi-avatar{ width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--accent-1),var(--accent-2)); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
-  .testi-person b{ font-size:14px; display:block; }
-  .testi-person span{ font-size:12px; color:var(--text-dim); }
-
-  /* ============ CONTACTO ============ */
-  .contact-wrap{
-    display:grid; grid-template-columns: 1fr 1fr; gap:50px;
-    background: linear-gradient(135deg, rgba(123,47,247,.16), rgba(0,212,255,.12));
-    border:1px solid var(--card-border); border-radius:28px; padding:56px; overflow:hidden; position:relative;
-    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  .intro-heading p.eyebrow{
+    font-family:var(--font-display);
+    color:var(--fg);
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    font-size:clamp(22px, 3.6vw, 38px);
+    font-weight:700;
+    margin:0 0 20px;
+    text-shadow:0 2px 18px rgba(0,0,0,0.75);
   }
-  .contact-info h2{ font-size:30px; margin-bottom:16px; }
-  .contact-info p{ color: var(--text-dim); margin-bottom:28px; }
-  .contact-line{ display:flex; align-items:center; gap:14px; margin-bottom:18px; font-size:15px; }
-  .contact-line .ic{ width:40px; height:40px; border-radius:12px; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
-
-  form.contact-form{ display:flex; flex-direction:column; gap:14px; }
-  form.contact-form input, form.contact-form textarea{
-    width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--card-border);
-    background: rgba(255,255,255,0.06); color:var(--text); font-size:14px; font-family:inherit;
+  .intro-heading h1{
+    font-family:var(--font-display);
+    font-size:clamp(28px, 5.5vw, 56px);
+    font-weight:700;
+    letter-spacing:-0.02em;
+    margin:0 0 18px;
+    text-shadow:0 4px 24px rgba(0,0,0,0.65), 0 1px 3px rgba(0,0,0,0.8);
   }
-  form.contact-form input::placeholder, form.contact-form textarea::placeholder{ color:var(--text-dim); }
-  form.contact-form textarea{ resize:vertical; min-height:100px; }
-  form.contact-form button{ margin-top:6px; }
-
-  /* ============ FOOTER ============ */
-  footer{ padding:44px 0 30px; border-top:1px solid var(--card-border); text-align:center; background: rgba(8,11,18,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-  footer p{ color: var(--text-dim); font-size:13px; margin-top:10px; }
-  .footer-logo{ display:flex; align-items:center; justify-content:center; gap:10px; font-weight:800; margin-bottom:6px; }
-
-  /* ============ WHATSAPP FLOAT ============ */
-  .wa-float{
-    position:fixed; bottom:26px; right:26px; z-index:600;
-    width:60px; height:60px; border-radius:50%; background: var(--whatsapp);
-    display:flex; align-items:center; justify-content:center; font-size:28px;
-    box-shadow: 0 8px 24px rgba(37,211,102,.5);
+  .intro-heading p.sub{
+    color:var(--dim);
+    font-size:clamp(16px, 2.1vw, 21px);
+    line-height:1.55;
+    max-width:580px;
+    margin:0 auto;
+    text-shadow:0 2px 14px rgba(0,0,0,0.75);
   }
-  .wa-float::before{
-    content:""; position:absolute; inset:0; border-radius:50%; background: var(--whatsapp);
-    animation: pulsering 2s ease-out infinite; z-index:-1;
-  }
-  @keyframes pulsering{ 0%{ transform:scale(1); opacity:.6; } 100%{ transform:scale(1.9); opacity:0; } }
 
-  /* ============ SCROLL PROGRESS ============ */
-  .scroll-bar{ position:fixed; top:0; left:0; height:3px; background: linear-gradient(90deg,var(--accent-1),var(--accent-2),var(--accent-3)); z-index:700; width:0%; }
-
-  /* ============ REVEAL ============ */
-  .reveal{ opacity:0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
-  .reveal.visible{ opacity:1; transform: translateY(0); }
-
-  /* ============ RESPONSIVE ============ */
-  @media (max-width: 900px){
-    nav.links{ display:none; }
-    .catalog-grid{ grid-template-columns:1fr 1fr; }
-    .services-grid{ grid-template-columns:1fr 1fr; }
-    .contact-wrap{ grid-template-columns:1fr; padding:32px; }
+  /* ---------- Feature sections: video + texto, tipo Framer/Wix Studio ----------
+     Intercaladas entre las secciones de fotogramas: cada una vive en un
+     .feature-wrap alto (como los .pin-wrap) con un .feature-stage pineado
+     adentro. La tarjeta .feature se despliega (como un cajon/acordeon) al
+     entrar en esa franja de scroll, se mantiene abierta un tramo, y se
+     repliega de nuevo antes de pasar a la siguiente seccion pineada —
+     como una barra de tareas que aparece y se esconde. */
+  .feature-wrap{
+    position:relative;
+    height:240vh; /* mas recorrido de scroll: entra mas despacio y se queda mas tiempo abierta para poder leerla */
   }
-  @media (max-width: 600px){
-    section{ padding:70px 0; }
-    .catalog-grid{ grid-template-columns:1fr; }
-    .services-grid{ grid-template-columns:1fr; }
-    .counters{ grid-template-columns:1fr; }
-    .about-panel{ padding:32px 22px; }
+  .feature-stage{
+    position:sticky;
+    top:0;
+    height:100vh;
+    width:100%;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px;
+    background: var(--bg);
+    perspective: 1200px;
   }
+  /* Fondo de transicion: mientras esta tarjeta se abre, dibuja (bien
+     borroso y oscurecido) el ultimo fotograma de la seccion anterior;
+     mientras se cierra, adelanta el primer fotograma de la siguiente.
+     Asi el salto entre la foto a pantalla completa y esta tarjeta no
+     se siente un corte a negro, sino que la escena se "desenfoca"
+     hacia el fondo en vez de desaparecer de golpe. */
+  .feature-backdrop{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+  }
+  .feature{
+    position:relative;
+    width:100%;
+    max-width:1180px;
+    will-change: transform, opacity, clip-path;
+  }
+  .feature-inner{
+    max-width:1180px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items:center;
+  }
+  .feature--reverse .feature-inner{
+    grid-template-columns: 0.95fr 1.05fr;
+  }
+  .feature--reverse .feature-media{ order:2; }
+  .feature--reverse .feature-text{ order:1; }
+
+  .feature-media{
+    position:relative;
+    border-radius:22px;
+    overflow:hidden;
+    aspect-ratio: 4 / 3;
+    background:#000;
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.7);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .feature-media video{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .feature-media::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(200deg, rgba(255,255,255,0.05), rgba(0,0,0,0) 40%);
+    pointer-events:none;
+  }
+
+  .feature-text .index{
+    font-family:var(--font-display);
+    font-size:12px;
+    letter-spacing:0.18em;
+    color:var(--dim);
+    font-weight:700;
+    margin-bottom:16px;
+    display:block;
+  }
+  .feature-text h2{
+    font-family:var(--font-display);
+    font-size:clamp(24px, 3.4vw, 38px);
+    font-weight:700;
+    letter-spacing:-0.015em;
+    margin:0 0 16px;
+    line-height:1.15;
+  }
+  .feature-text p{
+    color:var(--dim);
+    font-size:clamp(14.5px, 1.5vw, 17px);
+    line-height:1.65;
+    max-width:460px;
+    margin:0;
+  }
+
+  /* Estilo A: tarjeta clasica con borde, sobre fondo levemente distinto */
+  .feature--card .feature-inner{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:28px;
+    padding: clamp(24px, 4vw, 48px);
+  }
+
+  /* Estilo B: sin tarjeta, mas editorial, numero grande de fondo.
+     Sin caja solida detras (a diferencia de los otros dos estilos),
+     asi que el texto queda directo sobre el fondo de transicion —
+     le damos sombra para que la legibilidad no dependa de que tan
+     claro salga ese fondo borroso. */
+  .feature--editorial .feature-text{ position:relative; }
+  .feature--editorial .feature-text h2,
+  .feature--editorial .feature-text p,
+  .feature--editorial .feature-text .index{
+    text-shadow:0 2px 20px rgba(0,0,0,0.65);
+  }
+  .feature--editorial .big-number{
+    font-family:var(--font-display);
+    position:absolute;
+    top:-0.6em; left:-0.05em;
+    font-size:clamp(70px, 9vw, 130px);
+    font-weight:800;
+    color:transparent;
+    -webkit-text-stroke:1px rgba(255,255,255,0.14);
+    z-index:-1;
+    line-height:1;
+  }
+  .feature--editorial .feature-media{ border-radius:12px; }
+
+  /* Estilo C: hero-card, video arriba a todo el ancho, texto centrado abajo */
+  .feature--stack .feature-inner{
+    display:block;
+    background:linear-gradient(180deg, var(--card-2), var(--bg));
+    border:1px solid var(--line);
+    border-radius:32px;
+    overflow:hidden;
+  }
+  .feature--stack .feature-media{
+    border-radius:0;
+    aspect-ratio:16/8;
+    box-shadow:none;
+  }
+  .feature--stack .feature-text{
+    text-align:center;
+    padding: clamp(28px, 5vw, 56px) clamp(20px, 6vw, 80px) clamp(40px, 6vw, 64px);
+  }
+  .feature--stack .feature-text p{ margin:0 auto; }
+  .feature--stack .index{ display:block; text-align:center; }
+
+  @media (max-width: 780px){
+    .feature-inner, .feature--reverse .feature-inner{
+      grid-template-columns:1fr;
+    }
+    .feature--reverse .feature-media, .feature--reverse .feature-text{ order:initial; }
+    .feature-media{ aspect-ratio:4/3; }
+  }
+
+  .note{
+    position:fixed;
+    bottom:14px;
+    left:14px;
+    font-size:11px;
+    color:var(--dim);
+    z-index:50;
+    max-width:300px;
+    line-height:1.4;
+  }
+
+  /* Velo de transicion: se atenua a este color justo en el ultimo
+     tramo de cada seccion y se despeja en el primer tramo de la
+     siguiente, para que el corte entre secciones no se note. */
+  .transition-veil{
+    position:fixed;
+    inset:0;
+    background:var(--bg);
+    opacity:0;
+    pointer-events:none;
+    z-index:45;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  /* Textura sutil tipo scanline: le da un aire de "distorsion" al
+     velo en vez de ser un color plano al pasar de seccion a seccion. */
+  .transition-veil::before{
+    content:"";
+    position:absolute;
+    inset:-4px;
+    background:repeating-linear-gradient(180deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode:overlay;
+  }
+  .transition-veil-mark{
+    position:relative;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.4em;
+    text-transform:uppercase;
+    color:var(--fg);
+    opacity:0;
+    transform:scale(0.85);
+    text-shadow:0 2px 14px rgba(0,0,0,0.8);
+  }
+  /* ============================================================
+     1) PRELOADER
+     ============================================================ */
+  .preloader{
+    position:fixed;
+    inset:0;
+    z-index:200;
+    background:var(--bg);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:22px;
+  }
+  .preloader-mark{
+    font-size:13px;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:var(--dim);
+  }
+  .preloader-count{
+    font-size:clamp(48px, 9vw, 96px);
+    font-weight:800;
+    letter-spacing:-0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .preloader-bar{
+    width:min(60vw, 260px);
+    height:2px;
+    background:rgba(255,255,255,0.12);
+    overflow:hidden;
+    border-radius:2px;
+  }
+  .preloader-bar-fill{
+    height:100%;
+    width:0%;
+    background:var(--accent);
+  }
+  .preloader.done{
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.7s ease;
+  }
+
+  /* ============================================================
+     2) NAV + MENU EXPANDIBLE
+     ============================================================ */
+  .nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 22px clamp(20px, 4vw, 40px);
+    pointer-events:none;
+  }
+  .nav-logo{
+    font-family:var(--font-display);
+    font-weight:700;
+    letter-spacing:0.01em;
+    font-size:15px;
+    color:var(--fg);
+    text-shadow:0 2px 10px rgba(0,0,0,0.6);
+    pointer-events:auto;
+  }
+  .nav-toggle{
+    pointer-events:auto;
+    position:relative;
+    width:52px; height:52px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,0.18);
+    background:rgba(10,10,12,0.35);
+    backdrop-filter: blur(6px);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .nav-toggle .bars{
+    position:relative;
+    width:18px; height:12px;
+  }
+  .nav-toggle .bars span{
+    position:absolute;
+    left:0; right:0;
+    height:1.5px;
+    background:var(--fg);
+    transition: transform .35s ease, opacity .35s ease, top .35s ease;
+  }
+  .nav-toggle .bars span:nth-child(1){ top:0; }
+  .nav-toggle .bars span:nth-child(2){ top:50%; margin-top:-0.75px; }
+  .nav-toggle .bars span:nth-child(3){ top:100%; margin-top:-1.5px; }
+  .nav-toggle.open .bars span:nth-child(1){ top:50%; transform:rotate(45deg); }
+  .nav-toggle.open .bars span:nth-child(2){ opacity:0; }
+  .nav-toggle.open .bars span:nth-child(3){ top:50%; transform:rotate(-45deg); }
+
+  .nav-overlay{
+    position:fixed;
+    inset:0;
+    z-index:90;
+    background:var(--bg-2);
+    clip-path: circle(0% at calc(100% - 46px) 46px);
+    transition: clip-path .7s cubic-bezier(.7,0,.2,1);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+  }
+  .nav-overlay.open{
+    clip-path: circle(150% at calc(100% - 46px) 46px);
+    pointer-events:auto;
+  }
+  .nav-links{
+    list-style:none;
+    margin:0; padding:0;
+    text-align:center;
+  }
+  .nav-links li{ overflow:hidden; }
+  .nav-links a{
+    display:block;
+    padding: 10px 0;
+    font-size:clamp(30px, 6vw, 58px);
+    font-weight:700;
+    letter-spacing:-0.02em;
+    color:var(--fg);
+    text-decoration:none;
+    opacity:0;
+  }
+  .nav-links a:hover{ color:var(--dim); }
+  .nav-overlay-foot{
+    position:absolute;
+    bottom:34px; left:0; right:0;
+    text-align:center;
+    color:var(--dim);
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+  }
+
+  /* ============================================================
+     3) INDICADOR DE PROGRESO (dot-nav lateral)
+     ============================================================ */
+  .dot-nav{
+    position:fixed;
+    right: clamp(14px, 3vw, 28px);
+    top:50%;
+    transform:translateY(-50%);
+    z-index:80;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .dot-nav button{
+    appearance:none;
+    border:none;
+    background:none;
+    padding:6px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:10px;
+  }
+  .dot-nav .dot{
+    width:7px; height:7px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.3);
+    transition: background .3s ease, transform .3s ease;
+  }
+  .dot-nav .label{
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    color:var(--dim);
+    opacity:0;
+    transform:translateX(6px);
+    transition: opacity .25s ease, transform .25s ease;
+    white-space:nowrap;
+  }
+  .dot-nav button:hover .label{ opacity:1; transform:translateX(0); }
+  .dot-nav button.active .dot{
+    background:var(--fg);
+    transform:scale(1.6);
+  }
+  @media (max-width: 900px){ .dot-nav{ display:none; } }
+
+  /* ============================================================
+     4) CURSOR PERSONALIZADO (solo puntero fino / desktop)
+     ============================================================ */
+  @media (hover:hover) and (pointer:fine){
+    body.has-custom-cursor, body.has-custom-cursor a, body.has-custom-cursor button{ cursor:none; }
+    .cursor-dot{
+      position:fixed;
+      top:0; left:0;
+      width:10px; height:10px;
+      margin:-5px 0 0 -5px;
+      border-radius:50%;
+      background:var(--accent);
+      z-index:300;
+      pointer-events:none;
+      transition: transform .15s ease, opacity .2s ease;
+      opacity:0;
+    }
+    .cursor-ring{
+      position:fixed;
+      top:0; left:0;
+      width:40px; height:40px;
+      margin:-20px 0 0 -20px;
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,0.5);
+      z-index:300;
+      pointer-events:none;
+      transition: width .3s ease, height .3s ease, margin .3s ease, border-color .3s ease, opacity .2s ease;
+      opacity:0;
+    }
+    body.cursor-ready .cursor-dot, body.cursor-ready .cursor-ring{ opacity:1; }
+    .cursor-ring.hovering{
+      width:76px; height:76px;
+      margin:-38px 0 0 -38px;
+      border-color:rgba(255,255,255,0.85);
+    }
+    .cursor-ring.hovering::after{
+      content:"Ver";
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:11px;
+      letter-spacing:0.1em;
+      text-transform:uppercase;
+      color:var(--fg);
+    }
+    .cursor-ring.hovering.drag-hint::after{ content:"◀ Arrastrá ▶"; font-size:9.5px; letter-spacing:0.06em; }
+  }
+
+  /* ============================================================
+     6) BOTONES MAGNETICOS
+     ============================================================ */
+  .magnetic{ display:inline-flex; will-change:transform; }
+
+  /* ============================================================
+     7) CTA FLOTANTE + SECCION DE CONTACTO
+     ============================================================ */
+  .cta-float{
+    position:fixed;
+    right: clamp(16px, 3vw, 30px);
+    bottom: clamp(16px, 3vw, 30px);
+    z-index:80;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:15px 22px;
+    border-radius:999px;
+    background:var(--accent);
+    color:#0a0a0a;
+    font-weight:700;
+    font-size:14px;
+    text-decoration:none;
+    box-shadow:0 14px 40px -10px rgba(0,0,0,0.6);
+  }
+  .cta-float:hover{ background:#fff; }
+
+  .contact{
+    position:relative;
+    overflow:hidden;
+    min-height:112vh; /* mas alta que la pantalla: sin esto, el scroll se
+      queda corto antes de llegar a 'top top' y el velo/texto final
+      nunca terminan de resolverse */
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 100px 24px;
+    background: var(--bg);
+  }
+  .contact-bg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:0.6;
+  }
+  .contact-bg-fade{
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 40%, rgba(8,9,11,0.35) 0%, var(--bg) 85%),
+      linear-gradient(180deg, var(--bg) 0%, rgba(8,9,11,0.25) 25%, rgba(8,9,11,0.25) 70%, var(--bg) 100%);
+  }
+  .contact-inner{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .contact .eyebrow{
+    color:var(--dim);
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    font-size:12px;
+    margin:0 0 18px;
+  }
+  .contact h2{
+    font-family:var(--font-display);
+    font-size:clamp(28px, 5vw, 52px);
+    font-weight:700;
+    letter-spacing:-0.02em;
+    margin:0 0 18px;
+    max-width:760px;
+  }
+  .contact p{
+    color:var(--dim);
+    max-width:520px;
+    margin:0 0 36px;
+    font-size:clamp(14.5px, 1.6vw, 17px);
+    line-height:1.6;
+  }
+  .stats-row{
+    display:flex;
+    gap: clamp(28px, 6vw, 64px);
+    flex-wrap:wrap;
+    justify-content:center;
+    margin: 4px 0 40px;
+  }
+  .contact-direct{
+    color:var(--fg) !important;
+    font-size:clamp(16px, 2vw, 19px) !important;
+    max-width:none !important;
+    margin:0 0 28px !important;
+    letter-spacing:0.01em;
+  }
+  .contact-direct span{ color:var(--dim); margin-right:4px; }
+  .contact-direct a{
+    color:var(--fg);
+    font-weight:700;
+    text-decoration:underline;
+    text-decoration-color:var(--line);
+    text-underline-offset:4px;
+  }
+  .contact-direct a:hover{ text-decoration-color:var(--accent); }
+  .stat{ text-align:center; }
+  .stat-num{
+    display:block;
+    font-size:clamp(32px, 5vw, 52px);
+    font-weight:800;
+    letter-spacing:-0.02em;
+    font-variant-numeric: tabular-nums;
+    background:linear-gradient(120deg, var(--fg), var(--dim));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .stat-label{
+    display:block;
+    font-size:11.5px;
+    color:var(--dim);
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    margin-top:6px;
+  }
+  .stat-word{
+    font-family:var(--font-display);
+    display:block;
+    font-size:clamp(20px, 2.6vw, 28px);
+    font-weight:800;
+    letter-spacing:-0.01em;
+    background:linear-gradient(120deg, var(--fg), var(--dim));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+
+  .contact-actions{ display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:16px 30px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:15px;
+    text-decoration:none;
+    cursor:pointer;
+    border:none;
+  }
+  .btn-primary{ background:var(--accent); color:#0a0a0a; }
+  .btn-primary:hover{ background:#fff; }
+  .btn-ghost{ background:rgba(255,255,255,0.06); color:var(--fg); border:1px solid var(--line); }
+  .btn-ghost:hover{ background:rgba(255,255,255,0.1); }
+
+  /* ============================================================
+     5) REVEAL DE TEXTO POR PALABRA
+     ============================================================ */
+  .word-wrap{ display:inline-block; overflow:hidden; vertical-align:top; }
+  .word{ display:inline-block; will-change:transform; }
 </style>
 </head>
 <body>
 
-<!-- El video vive detrás de TODA la página (fixed) y su fotograma lo controla el scroll -->
-<video class="bg-video" id="bgVideo" muted playsinline preload="auto" poster="assets/story-poster.png">
-  <source src="assets/hero-bg.mp4" type="video/mp4">
-</video>
-<div class="bg-overlay"></div>
-
-<div class="scroll-bar" id="scrollBar"></div>
-
-<!-- ============ NAV ============ -->
-<header class="nav">
-  <div class="nav-inner">
-    <div class="logo"><span class="logo-mark">FB</span> Fidel Bonilla</div>
-    <nav class="links">
-      <a href="#sobre-mi">Conóceme</a>
-      <a href="#catalogo">Catálogo</a>
-      <a href="#servicios">Servicios</a>
-      <a href="#testimonios">Opiniones</a>
-      <a href="#contacto">Contacto</a>
-    </nav>
-    <div class="nav-cta">
-      <a class="btn btn-whatsapp" style="padding:10px 20px;font-size:13px" href="https://wa.me/50000000000?text=Hola%20Fidel%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20auto" target="_blank" rel="noopener">WhatsApp</a>
-    </div>
+  <div class="transition-veil">
+    <span class="transition-veil-mark">Scroll·Cars</span>
   </div>
-</header>
 
-<!-- ============ HERO ============ -->
-<section class="hero">
-  <div class="container">
-    <div class="reveal visible">
-      <div class="eyebrow">Asesor automotriz multimarca</div>
-      <h1>Fidel Ernesto<br><span class="grad-text">Bonilla Álvarez</span></h1>
-      <p class="lead">Tu próximo auto empieza aquí. Autos nuevos y usados, financiamiento a tu medida y asesoría personalizada — desliza y sigue el recorrido.</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="https://wa.me/50000000000?text=Hola%20Fidel%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20auto" target="_blank" rel="noopener">💬 Cotizar por WhatsApp</a>
-        <a class="btn btn-ghost" href="#catalogo">Ver catálogo</a>
+  <!-- 1) Preloader: se oculta cuando terminan de cargar todos los
+       fotogramas y videos (ver script.js) -->
+  <div class="preloader" id="preloader">
+    <div class="preloader-mark">Cargando el recorrido</div>
+    <div class="preloader-count" id="preloader-count">0%</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="preloader-bar"></div></div>
+  </div>
+
+  <!-- 2) Nav fija + boton que expande el menu -->
+  <header class="nav">
+    <a href="#top" class="nav-logo magnetic">Scroll·Cars</a>
+    <button type="button" class="nav-toggle magnetic" id="nav-toggle" aria-label="Abrir menú">
+      <span class="bars"><span></span><span></span><span></span></span>
+    </button>
+  </header>
+  <nav class="nav-overlay" id="nav-overlay">
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#top" data-target="top">Inicio</a></li>
+      <li><a href="#diseno" data-target="diseno">Trámites vehiculares</a></li>
+      <li><a href="#precision" data-target="precision">Traspasos y matriculación</a></li>
+      <li><a href="#ingenieria" data-target="ingenieria">Certificados ANT</a></li>
+      <li><a href="#tecnologia" data-target="tecnologia">Certificado vehicular</a></li>
+      <li><a href="#resultado" data-target="resultado">Historial del vehículo</a></li>
+      <li><a href="#garantia" data-target="garantia">Compra y consignación</a></li>
+      <li><a href="#contacto" data-target="contacto">Contacto</a></li>
+    </ul>
+    <div class="nav-overlay-foot">Fidel Bonilla · 0958751855</div>
+  </nav>
+
+  <!-- 3) Indicador de progreso / navegacion por puntos -->
+  <nav class="dot-nav" id="dot-nav">
+    <button data-target="top"><span class="label">Inicio</span><span class="dot"></span></button>
+    <button data-target="diseno"><span class="label">Trámites</span><span class="dot"></span></button>
+    <button data-target="precision"><span class="label">Traspasos</span><span class="dot"></span></button>
+    <button data-target="ingenieria"><span class="label">Certificados</span><span class="dot"></span></button>
+    <button data-target="tecnologia"><span class="label">Vehicular</span><span class="dot"></span></button>
+    <button data-target="resultado"><span class="label">Historial</span><span class="dot"></span></button>
+    <button data-target="garantia"><span class="label">Compra</span><span class="dot"></span></button>
+    <button data-target="contacto"><span class="label">Contacto</span><span class="dot"></span></button>
+  </nav>
+
+  <!-- 4) Cursor personalizado -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
+
+  <!-- Intro: primera seccion pineada, se scrubea con el scroll. -->
+  <div class="pin-wrap" id="top" data-section="intro">
+    <div class="pin-stage">
+      <canvas class="frame-canvas enhance" width="960" height="540"></canvas>
+      <div class="stage-overlay"></div>
+      <div class="intro-heading">
+        <p class="eyebrow">Compra y venta de vehículos</p>
+        <h1>Rápido, confiable y con atención personalizada</h1>
+        <p class="sub">Consignación de vehículos, trámites vehiculares, notarización y documentación — y compra de tu auto al contado, rápido y seguro.</p>
       </div>
-      <div class="hero-stats">
-        <div class="stat"><b>12+</b><span>Años de experiencia</span></div>
-        <div class="stat"><b>500+</b><span>Autos entregados</span></div>
-        <div class="stat"><b>4.9★</b><span>Calificación clientes</span></div>
+    </div>
+  </div>
+
+  <!-- Cada .pin-wrap es una seccion pineada independiente -->
+  <div class="pin-wrap" id="diseno" data-section="0">
+    <div class="pin-stage">
+      <canvas class="frame-canvas" width="960" height="540"></canvas>
+      <div class="stage-overlay"></div>
+      <div class="mood-tint mood-amber"></div>
+      <div class="section-index">01 / 03</div>
+      <div class="caption">
+        <span class="eyebrow">Diseño exterior</span>
+        <h2>Cada línea, calculada</h2>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ SOBRE MI ============ -->
-<section id="sobre-mi">
-  <div class="container">
-    <div class="about-panel reveal">
-      <div class="eyebrow" style="justify-content:center">Sobre mí</div>
-      <h2 style="margin-bottom:16px;">Asesoría honesta, de principio a fin</h2>
-      <p>Mi trabajo no termina cuando firmas: te acompaño en la elección, el financiamiento, el papeleo y la entrega, para que tomes la mejor decisión sin presiones.</p>
-      <div class="counters">
-        <div class="counter-card"><b class="grad-text">500+</b><span>Autos entregados</span></div>
-        <div class="counter-card"><b class="grad-text">98%</b><span>Clientes satisfechos</span></div>
-        <div class="counter-card"><b class="grad-text">24h</b><span>Tiempo de respuesta</span></div>
+      <div class="data-chip">
+        <p class="data-chip-label">Trámites vehiculares</p>
+        <ul>
+          <li><b>Traspasos</b> · Revisión · Matriculación</li>
+          <li><b>Bloqueos</b> y placas</li>
+          <li>Asesoramiento gratuito</li>
+        </ul>
       </div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
     </div>
   </div>
-</section>
 
-<!-- ============ MARQUEE MARCAS ============ -->
-<div class="marquee-section">
-  <div class="marquee-label">Trabajo con las marcas más confiables del mercado</div>
-  <div class="marquee">
-    <div class="marquee-track" id="brandTrack">
-      <div class="brand-chip">Toyota</div>
-      <div class="brand-chip">Nissan</div>
-      <div class="brand-chip">Chevrolet</div>
-      <div class="brand-chip">Kia</div>
-      <div class="brand-chip">Mazda</div>
-      <div class="brand-chip">Hyundai</div>
-      <div class="brand-chip">Volkswagen</div>
-      <div class="brand-chip">Ford</div>
-      <div class="brand-chip">Honda</div>
-      <div class="brand-chip">Suzuki</div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ CATALOGO ============ -->
-<section id="catalogo">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="eyebrow" style="justify-content:center">Catálogo destacado</div>
-      <h2>Algunas opciones disponibles ahora</h2>
-      <p>Inventario multimarca actualizado. Pregunta por disponibilidad y condiciones de financiamiento.</p>
-    </div>
-    <div class="catalog-grid">
-      <div class="car-card reveal">
-        <div class="car-card-media media-1"><span class="tag">Usado · Como nuevo</span></div>
-        <div class="car-card-body">
-          <h3>Sedán Compacto 2021</h3>
-          <span class="price">Desde $9,800</span>
-          <div class="car-meta"><span>🛣️ 38,000 km</span><span>⚙️ Automático</span></div>
-          <a class="btn btn-whatsapp" style="width:100%;justify-content:center;padding:12px" href="https://wa.me/50000000000?text=Hola%2C%20me%20interesa%20el%20Sed%C3%A1n%20Compacto%202021" target="_blank" rel="noopener">Consultar</a>
+  <!-- Se despliega y se vuelve a esconder antes de la siguiente seccion pineada -->
+  <div class="feature-wrap" id="precision">
+    <div class="feature-stage">
+      <canvas class="feature-backdrop"></canvas>
+      <div class="mood-tint mood-cyan"></div>
+      <section class="feature feature--card" data-anim="rise">
+        <div class="feature-inner">
+          <div class="feature-media">
+            <video src="videos/feature-1.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div class="feature-text">
+            <span class="index">01 — Trámites vehiculares</span>
+            <h2>Traspasos, revisión y matriculación</h2>
+            <p>Nos encargamos de todo el papeleo — traspasos, revisión, matriculación, bloqueos y placas — con asesoramiento gratuito en cada paso. También trámites de licencias: primera vez, tipo A-B-F, tipo C-E y bloqueos de licencia.</p>
+          </div>
         </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="pin-wrap" id="ingenieria" data-section="1">
+    <div class="pin-stage">
+      <canvas class="frame-canvas" width="960" height="540"></canvas>
+      <div class="stage-overlay"></div>
+      <div class="mood-tint mood-violet"></div>
+      <div class="section-index">02 / 03</div>
+      <div class="caption">
+        <span class="eyebrow">Bajo la superficie</span>
+        <h2>Ingeniería en cada pieza</h2>
       </div>
-      <div class="car-card reveal">
-        <div class="car-card-media media-2"><span class="tag">Nuevo</span></div>
-        <div class="car-card-body">
-          <h3>SUV Familiar 2024</h3>
-          <span class="price">Desde $22,500</span>
-          <div class="car-meta"><span>🛣️ 0 km</span><span>⚙️ Automático</span></div>
-          <a class="btn btn-whatsapp" style="width:100%;justify-content:center;padding:12px" href="https://wa.me/50000000000?text=Hola%2C%20me%20interesa%20la%20SUV%20Familiar%202024" target="_blank" rel="noopener">Consultar</a>
+      <div class="data-chip">
+        <p class="data-chip-label">Certificados oficiales</p>
+        <ul>
+          <li><b>Certificado</b> Único Vehicular</li>
+          <li><b>Certificado</b> Único del Conductor</li>
+          <li>Información verificada · entrega rápida</li>
+        </ul>
+      </div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="feature-wrap" id="tecnologia">
+    <div class="feature-stage">
+      <canvas class="feature-backdrop"></canvas>
+      <div class="mood-tint mood-cyan"></div>
+      <section class="feature feature--editorial feature--reverse" data-anim="wipe">
+        <div class="feature-inner">
+          <div class="feature-media">
+            <video src="videos/feature-2.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div class="feature-text">
+            <span class="big-number">02</span>
+            <span class="index">02 — Certificados ANT</span>
+            <h2>Certificado Único Vehicular y del Conductor</h2>
+            <p>Información verificada, entrega rápida, atención inmediata y pago seguro — con el respaldo de la Agencia Nacional de Tránsito y la Comisión de Tránsito del Ecuador.</p>
+          </div>
         </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="pin-wrap" id="resultado" data-section="2">
+    <div class="pin-stage">
+      <canvas class="frame-canvas" width="960" height="540"></canvas>
+      <div class="stage-overlay"></div>
+      <div class="mood-tint mood-gold"></div>
+      <div class="section-index">03 / 03</div>
+      <div class="caption">
+        <span class="eyebrow">El resultado</span>
+        <h2>El futuro toma forma</h2>
       </div>
-      <div class="car-card reveal">
-        <div class="car-card-media media-3"><span class="tag">Usado</span></div>
-        <div class="car-card-body">
-          <h3>Pickup 4x4 2020</h3>
-          <span class="price">Desde $16,900</span>
-          <div class="car-meta"><span>🛣️ 52,000 km</span><span>⚙️ Manual</span></div>
-          <a class="btn btn-whatsapp" style="width:100%;justify-content:center;padding:12px" href="https://wa.me/50000000000?text=Hola%2C%20me%20interesa%20la%20Pickup%204x4%202020" target="_blank" rel="noopener">Consultar</a>
+      <div class="data-chip">
+        <p class="data-chip-label">Historial del vehículo</p>
+        <ul>
+          <li>Envianos la <b>placa</b> y hacemos el resto</li>
+          <li>Evitá sorpresas · compra segura</li>
+          <li>Confianza y garantía</li>
+        </ul>
+      </div>
+      <div class="progress-track"><div class="progress-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="feature-wrap" id="garantia">
+    <div class="feature-stage">
+      <canvas class="feature-backdrop"></canvas>
+      <div class="mood-tint mood-green"></div>
+      <section class="feature feature--stack" data-anim="scale">
+        <div class="feature-inner">
+          <div class="feature-media">
+            <video src="videos/feature-3.mp4" autoplay muted loop playsinline></video>
+          </div>
+          <div class="feature-text">
+            <span class="index">03 — Compra y consignación</span>
+            <h2>Compramos tu auto al contado</h2>
+            <p>Consignación de vehículos, notarización y documentación vehicular, y compra CASH — pagamos al contado, rápido y seguro. Confianza y garantía en cada operación.</p>
+          </div>
         </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- 7) CTA flotante + seccion de contacto -->
+  <section class="contact" id="contacto">
+    <video class="contact-bg" src="videos/social.mp4" autoplay muted loop playsinline></video>
+    <div class="contact-bg-fade"></div>
+    <div class="contact-inner">
+      <p class="eyebrow">¿Listo para el siguiente paso?</p>
+      <h2>Hablemos de tu próximo auto</h2>
+      <p>Envianos la placa de tu vehículo o contanos qué estás buscando — te ayudamos con la compra, la venta y todo el papeleo. Rápido, confiable y con atención personalizada.</p>
+      <div class="stats-row">
+        <div class="stat"><span class="stat-word">Rápido</span><span class="stat-label">Entrega y respuesta inmediata</span></div>
+        <div class="stat"><span class="stat-word">Confiable</span><span class="stat-label">Información verificada</span></div>
+        <div class="stat"><span class="stat-word">Seguro</span><span class="stat-label">Pago al contado</span></div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ SERVICIOS ============ -->
-<section id="servicios" style="background:rgba(14,20,36,0.2); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);">
-  <div class="container">
-    <div class="section-head reveal">
-      <div class="eyebrow" style="justify-content:center">Servicios</div>
-      <h2>Todo lo que necesitas en un solo lugar</h2>
-    </div>
-    <div class="services-grid">
-      <div class="service-card reveal"><div class="service-icon">🚗</div><h3>Multimarca</h3><p>Nuevos y usados de las principales marcas del mercado.</p></div>
-      <div class="service-card reveal"><div class="service-icon">💳</div><h3>Financiamiento</h3><p>Planes flexibles adaptados a tu capacidad de pago.</p></div>
-      <div class="service-card reveal"><div class="service-icon">🔄</div><h3>Recibo tu auto</h3><p>Toma tu vehículo actual como parte de pago.</p></div>
-      <div class="service-card reveal"><div class="service-icon">🛡️</div><h3>Garantía</h3><p>Vehículos revisados con garantía sobre motor y transmisión.</p></div>
-      <div class="service-card reveal"><div class="service-icon">🚚</div><h3>Entrega a domicilio</h3><p>Recibe tu auto donde te quede más cómodo.</p></div>
-      <div class="service-card reveal"><div class="service-icon">🤝</div><h3>Asesoría personalizada</h3><p>Te acompaño en cada paso, sin presión ni letra pequeña.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ TESTIMONIOS ============ -->
-<section id="testimonios">
-  <div class="section-head reveal">
-    <div class="eyebrow" style="justify-content:center">Testimonios</div>
-    <h2>Lo que dicen mis clientes</h2>
-  </div>
-  <div class="marquee">
-    <div class="testi-track">
-      <div class="testi-card"><div class="stars">★★★★★</div><p>"Fidel me ayudó a encontrar el auto perfecto para mi presupuesto, todo el proceso fue rápido y transparente."</p><div class="testi-person"><div class="testi-avatar">MR</div><div><b>María R.</b><span>Compró un sedán 2021</span></div></div></div>
-      <div class="testi-card"><div class="stars">★★★★★</div><p>"Excelente asesoría, me explicó todas las opciones de financiamiento sin presionarme a decidir."</p><div class="testi-person"><div class="testi-avatar">JL</div><div><b>Jorge L.</b><span>Compró una SUV 2024</span></div></div></div>
-      <div class="testi-card"><div class="stars">★★★★★</div><p>"Recibió mi auto anterior como parte de pago y el trámite fue muchísimo más sencillo de lo que pensé."</p><div class="testi-person"><div class="testi-avatar">CD</div><div><b>Carla D.</b><span>Compró una pickup 2020</span></div></div></div>
-      <div class="testi-card"><div class="stars">★★★★★</div><p>"Fidel me ayudó a encontrar el auto perfecto para mi presupuesto, todo el proceso fue rápido y transparente."</p><div class="testi-person"><div class="testi-avatar">MR</div><div><b>María R.</b><span>Compró un sedán 2021</span></div></div></div>
-      <div class="testi-card"><div class="stars">★★★★★</div><p>"Excelente asesoría, me explicó todas las opciones de financiamiento sin presionarme a decidir."</p><div class="testi-person"><div class="testi-avatar">JL</div><div><b>Jorge L.</b><span>Compró una SUV 2024</span></div></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ CONTACTO ============ -->
-<section id="contacto">
-  <div class="container">
-    <div class="contact-wrap reveal">
-      <div class="contact-info">
-        <h2>Hablemos de tu próximo auto</h2>
-        <p>Escríbeme y te respondo en menos de 24 horas con opciones a tu medida.</p>
-        <div class="contact-line"><span class="ic">💬</span> WhatsApp: <a href="https://wa.me/50000000000" target="_blank" rel="noopener" style="margin-left:4px;text-decoration:underline">+50 0000 0000</a></div>
-        <div class="contact-line"><span class="ic">📍</span> Zona metropolitana</div>
-        <div class="contact-line"><span class="ic">🕘</span> Lun – Sáb · 8:00am – 7:00pm</div>
+      <p class="contact-direct"><span>Contactá directo:</span> Fidel Bonilla — <a href="tel:+593958751855">0958751855</a></p>
+      <div class="contact-actions">
+        <a href="tel:+593958751855" class="btn btn-primary magnetic">📞 Llamar ahora</a>
+        <a href="https://wa.me/593958751855" target="_blank" rel="noopener" class="btn btn-ghost magnetic">WhatsApp</a>
       </div>
-      <form class="contact-form" action="mailto:contacto@ejemplo.com" method="post" enctype="text/plain">
-        <input type="text" placeholder="Tu nombre" required>
-        <input type="tel" placeholder="Tu teléfono" required>
-        <textarea placeholder="¿Qué tipo de auto buscas?" required></textarea>
-        <button type="submit" class="btn btn-primary">Enviar mensaje</button>
-      </form>
+      <!-- Botones de redes sociales: se agregan a continuacion -->
+      <div class="contact-social"></div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ============ FOOTER ============ -->
-<footer>
-  <div class="footer-logo"><span class="logo-mark">FB</span> Fidel Bonilla</div>
-  <p>Asesor automotriz multimarca · Autos nuevos y usados</p>
-  <p>© 2026 Fidel Ernesto Bonilla Álvarez. Todos los derechos reservados.</p>
-</footer>
+  <a href="tel:+593958751855" class="cta-float magnetic">📞 0958751855</a>
 
-<a class="wa-float" href="https://wa.me/50000000000?text=Hola%20Fidel%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20auto" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">💬</a>
+  <div class="note">Compra y venta de vehículos · Trámites vehiculares · Fidel Bonilla — 0958751855</div>
 
-<script>
-  // Reemplaza este número por el WhatsApp real de Fidel (formato: código de país + número, sin + ni espacios)
-  const WHATSAPP_NUMBER = "50000000000";
-  document.querySelectorAll('a[href*="wa.me/50000000000"]').forEach(a=>{
-    a.href = a.href.replace("50000000000", WHATSAPP_NUMBER);
-  });
-
-  // Duplicar tracks de marquee para loop infinito real
-  document.querySelectorAll('.marquee-track, .testi-track').forEach(track=>{
-    track.innerHTML += track.innerHTML;
-  });
-
-  // Scroll reveal
-  const revealEls = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); } });
-  }, { threshold: 0.15 });
-  revealEls.forEach(el=> io.observe(el));
-
-  // Scroll progress bar
-  const bar = document.getElementById('scrollBar');
-  window.addEventListener('scroll', ()=>{
-    const h = document.documentElement;
-    const pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
-    bar.style.width = pct + '%';
-  }, { passive:true });
-
-  // ============ EL VIDEO ES LA PÁGINA: avanza con el scroll, en TODA la web ============
-  (function(){
-    const video = document.getElementById('bgVideo');
-    let duration = 10.07; // se ajusta cuando el navegador confirma la duración real
-    let videoReady = false;
-    video.addEventListener('loadedmetadata', ()=>{ if(video.duration) duration = video.duration; videoReady = true; });
-    video.addEventListener('canplay', ()=>{ videoReady = true; });
-    video.addEventListener('error', ()=>{
-      console.warn('El video no pudo cargarse (revisa que assets/hero-bg.mp4 exista junto al HTML). Se muestra la imagen de respaldo.');
-    });
-    video.pause(); // no se reproduce solo: el scroll es quien manda
-    video.load();
-
-    const PX_PER_LOOP = 700; // cada 700px de scroll, el video completa un ciclo entero
-
-    let ticking = false;
-    function update(){
-      ticking = false;
-      const y = Math.max(0, window.scrollY);
-      const cycle = (y % PX_PER_LOOP) / PX_PER_LOOP; // 0 → 1 dentro de cada ciclo
-      if(videoReady && video.readyState >= 1){
-        try{ video.currentTime = cycle * duration; }catch(err){ /* aún no listo para buscar */ }
-      }
-    }
-    function onScroll(){
-      if(!ticking){ requestAnimationFrame(update); ticking = true; }
-    }
-    window.addEventListener('scroll', onScroll, { passive:true });
-    window.addEventListener('resize', onScroll);
-    update();
-  })();
-
-  // Mailto form (sin backend): construye el enlace con los datos y lo abre
-  document.querySelector('.contact-form').addEventListener('submit', function(e){
-    e.preventDefault();
-    const [nombre, tel] = this.querySelectorAll('input');
-    const msg = this.querySelector('textarea').value;
-    const body = encodeURIComponent(`Nombre: ${nombre.value}\nTeléfono: ${tel.value}\nMensaje: ${msg}`);
-    window.location.href = `mailto:contacto@ejemplo.com?subject=Contacto%20desde%20la%20web&body=${body}`;
-  });
-</script>
-
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
