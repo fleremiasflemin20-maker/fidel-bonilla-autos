@@ -15,7 +15,7 @@
 <br/>
 
 <p align="center">
-  <img src="./preview.jpg" width="90%" alt="Vista previa de Scroll·Cars" />
+  <img src="https://github.com/user-attachments/assets/d210c51a-df39-4769-9309-b2ca638b495b" width="90%" alt="Vista previa de Scroll·Cars" />
 </p>
 
 ## Sobre el proyecto
